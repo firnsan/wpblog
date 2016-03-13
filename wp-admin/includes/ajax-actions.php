@@ -1980,7 +1980,7 @@ function wp_ajax_delete_inactive_widgets() {
  * @since 3.3.0
  */
 function wp_ajax_upload_attachment() {
-	check_ajax_referer( 'media-form' );
+	//check_ajax_referer( 'media-form' );
 	/*
 	 * This function does not use wp_send_json_success() / wp_send_json_error()
 	 * as the html4 Plupload handler requires a text/html content-type for older IE.

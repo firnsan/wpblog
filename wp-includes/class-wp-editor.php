@@ -1193,6 +1193,29 @@ final class _WP_Editors {
 			ref: <?php echo self::_parse_init( $ref ); ?>,
 			load_ext: function(url,lang){var sl=tinymce.ScriptLoader;sl.markDone(url+'/langs/'+lang+'.js');sl.markDone(url+'/langs/'+lang+'_dlg.js');}
 		};
+	document.getElementById("content").addEventListener("paste", function(e){
+		e.preventDefault();
+		var t = e.originalEvent || e,
+			n = t.clipboardData.getData("text/plain");
+		if(n) return  void document.execCommand("insertHtml", !1, n);
+		for(var i, r = 0; r < t.clipboardData.items.length && (i = t.clipboardData.items[r], !i.type.match(/^image\//i)); r++);
+		if(r != t.clipboardData.items.length) {
+			var blob = i.getAsFile();
+            		var form = new FormData();
+			var name = Date.parse(new Date) + ".png"
+            		form.append("async-upload", blob, name);                           // ????
+            		var xhr = new XMLHttpRequest();
+            		xhr.open("post",'/wp-admin/async-upload.php?action=upload-attachment' , true);
+            		xhr.onload = function () {
+				if (xhr.readyState == 4){
+					var d = JSON.parse(xhr.responseText);
+					if (!d.success) console.log("upload file failed");
+					document.execCommand("insertHtml", !1, d.data.url);
+				}
+            		};
+            		xhr.send(form);
+		}
+	});
 		</script>
 		<?php
 
