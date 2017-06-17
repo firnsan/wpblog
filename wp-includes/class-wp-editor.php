@@ -1197,29 +1197,24 @@ final class _WP_Editors {
 		e.preventDefault();
 		var t = e.originalEvent || e,
 			n = t.clipboardData.getData("text/plain");
-		if(n) return  void document.execCommand("insertHtml", !1, n);
+		if(n) { 
+			document.execCommand("insertHtml", !1, n);	
+			return; 
+		}
 		for(var i, r = 0; r < t.clipboardData.items.length && (i = t.clipboardData.items[r], !i.type.match(/^image\//i)); r++);
 		if(r != t.clipboardData.items.length) {
 			var blob = i.getAsFile();
-            		var form = new FormData();
-			var name = Date.parse(new Date) + ".png"
-            		form.append("async-upload", blob, name);                           // ????
-            		var xhr = new XMLHttpRequest();
-            		xhr.open("post",'/wp-admin/async-upload.php?action=upload-attachment' , true);
-            		xhr.onload = function () {
-				if (xhr.readyState == 4){
-					var d = JSON.parse(xhr.responseText);
-					if (!d.success) console.log("upload file failed");
-					document.execCommand("insertHtml", !1, d.data.url);
-				}
-            		};
-            		xhr.send(form);
+			var cos = new CosCloud("10049763");
+			var name = Date.parse(new Date) + ".png";
+			cos.uploadFile(function(result){var obj=JSON.parse(result); ;document.execCommand("insertHtml",!1,obj.data.source_url);}, function(result){alert(result.responseText)}, "blog", "/images/"+ name, blob);
 		}
 	});
 		</script>
 		<?php
 
 		$baseurl = self::$baseurl;
+		echo "<script type='text/javascript' src='https://cdn.bootcss.com/jquery/3.1.0/jquery.min.js'></script>\n";
+		echo "<script type='text/javascript' src='/wp-includes/js/cos.js?c=1&amp;$version'></script>\n";
 		// Load tinymce.js when running from /src, else load wp-tinymce.js.gz (production) or tinymce.min.js (SCRIPT_DEBUG)
 		$mce_suffix = false !== strpos( $wp_version, '-src' ) ? '' : '.min';
 
